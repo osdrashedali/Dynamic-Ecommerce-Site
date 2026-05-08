@@ -1,1 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartShop - Online Product Store</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet" />
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <script>
+    // Tailwind custom config
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { outfit: ['Outfit', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#f0fdf6', 100: '#dcfce9', 200: '#bbf7d4', 300: '#86efad', 400: '#4ade7f', 500: '#22c55e', 600: '#16a34a', 700: '#15803c', 800: '#166533', 900: '#0f4a25' },
+            accent: { 400: '#fb923c', 500: '#f97316', 600: '#ea580c' }
+          }
+        }
+      }
+    }
+  </script>
 
+   <link rel="stylesheet" href="styles/style.css">
+</head>
+  <!-- BODY – dark mode starts as 'light' by default -->
+<body class="bg-gray-50 text-gray-800 dark:bg-gray-950 dark:text-gray-100 font-outfit transition-colors duration-300">
+
+  <script src="script.js"></script>
+</body>
+</html>
