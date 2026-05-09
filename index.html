@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SmartShop - Online Product Store</title>
-  <!-- Tailwind CSS CDN -->
+  <title>SmartShop</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Font -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
     rel="stylesheet" />
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <script>
-    // Tailwind custom config
     tailwind.config = {
       darkMode: 'class',
       theme: {
@@ -27,11 +26,449 @@
     }
   </script>
 
-   <link rel="stylesheet" href="styles/style.css">
+  <style>
+    body {
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .banner-slide {
+      transition: opacity 0.6s ease;
+    }
+
+    .cart-sidebar {
+      transition: transform 0.35s ease;
+    }
+
+    .toast-enter {
+      animation: slideIn 0.35s ease forwards;
+    }
+
+    .toast-exit {
+      animation: slideOut 0.35s ease forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateX(0);
+        opacity: 1;
+      }
+
+      to {
+        transform: translateX(120%);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-up {
+      animation: fadeUp 0.5s ease forwards;
+    }
+
+    .star-gold {
+      color: #f59e0b;
+    }
+
+    .star-empty {
+      color: #d1d5db;
+    }
+
+    /* Scrollbar styling for cart */
+    .cart-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .cart-scroll::-webkit-scrollbar-thumb {
+      background: #16a34a;
+      border-radius: 10px;
+    }
+  </style>
+
 </head>
-  <!-- BODY – dark mode starts as 'light' by default -->
+
+
 <body class="bg-gray-50 text-gray-800 dark:bg-gray-950 dark:text-gray-100 font-outfit transition-colors duration-300">
 
+  <div id="toastContainer" class="fixed top-20 right-4 z-[999] flex flex-col gap-2"></div>
+
+  <!-- Navbar sections code -->
+  <nav id="navbar" class="fixed top-0 left-0 w-full z-50 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md shadow-sm transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
+      <!-- Logo -->
+      <a href="#home" class="text-2xl font-900 text-brand-600 dark:text-brand-400 tracking-tight">
+        <i class="fa-solid fa-bag-shopping mr-1"></i>SmartShop
+      </a>
+
+      <!-- Desktop Menu er jonno -->
+      <ul id="navLinks" class="hidden md:flex items-center gap-1">
+        <li><a href="#home"
+            class="nav-link active px-4 py-2 rounded-lg text-sm font-500 hover:bg-brand-50 dark:hover:bg-gray-800 transition">Home</a>
+        </li>
+        <li><a href="#products"
+            class="nav-link px-4 py-2 rounded-lg text-sm font-500 hover:bg-brand-50 dark:hover:bg-gray-800 transition">Products</a>
+        </li>
+        <li><a href="#reviews"
+            class="nav-link px-4 py-2 rounded-lg text-sm font-500 hover:bg-brand-50 dark:hover:bg-gray-800 transition">Reviews</a>
+        </li>
+        <li><a href="#contact"
+            class="nav-link px-4 py-2 rounded-lg text-sm font-500 hover:bg-brand-50 dark:hover:bg-gray-800 transition">Contact</a>
+        </li>
+        <li><a href="#about"
+            class="nav-link px-4 py-2 rounded-lg text-sm font-500 hover:bg-brand-50 dark:hover:bg-gray-800 transition">About</a>
+        </li>
+      </ul>
+
+      <!-- Right Side: Balance, Dark Mode, Cart, Mobile Menu -->
+      <div class="flex items-center gap-3">
+        <!-- User Balance -->
+        <div id="balanceDisplay"
+          class="hidden sm:flex items-center gap-1.5 bg-brand-50 dark:bg-gray-800 px-3 py-1.5 rounded-full text-sm font-600 text-brand-700 dark:text-brand-400">
+          <i class="fa-solid fa-wallet"></i>
+          <span id="balanceAmount">1000</span> BDT
+          <button onclick="addMoney()"
+            class="ml-1 w-5 h-5 flex items-center justify-center bg-brand-600 text-white rounded-full text-xs hover:bg-brand-700 transition"
+            title="Add 1000 BDT">+</button>
+        </div>
+
+        <!-- Dark Mode Toggle -->
+        <button onclick="toggleDarkMode()" id="darkToggle"
+          class="w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-lg">
+          <i class="fa-solid fa-moon dark:hidden"></i>
+          <i class="fa-solid fa-sun hidden dark:inline"></i>
+        </button>
+
+        <!-- Cart Button -->
+        <button onclick="toggleCart()"
+          class="relative w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition text-lg">
+          <i class="fa-solid fa-cart-shopping"></i>
+          <span id="cartCount"
+            class="absolute -top-1 -right-1 w-5 h-5 bg-accent-500 text-white text-[10px] font-700 rounded-full flex items-center justify-center hidden">0</span>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button onclick="toggleMobileMenu()"
+          class="md:hidden w-9 h-9 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="md:hidden hidden bg-white dark:bg-gray-900 border-t dark:border-gray-800 px-4 pb-4">
+      <a href="#home" class="block py-2.5 text-sm font-500 hover:text-brand-600 transition">Home</a>
+      <a href="#products" class="block py-2.5 text-sm font-500 hover:text-brand-600 transition">Products</a>
+      <a href="#reviews" class="block py-2.5 text-sm font-500 hover:text-brand-600 transition">Reviews</a>
+      <a href="#contact" class="block py-2.5 text-sm font-500 hover:text-brand-600 transition">Contact</a>
+      <a href="#about" class="block py-2.5 text-sm font-500 hover:text-brand-600 transition">About</a>
+      <!-- Mobile balance -->
+      <div
+        class="sm:hidden flex items-center gap-2 mt-2 pt-2 border-t dark:border-gray-800 text-sm font-600 text-brand-700 dark:text-brand-400">
+        <i class="fa-solid fa-wallet"></i> Balance: <span id="balanceAmountMobile">1000</span> BDT
+        <button onclick="addMoney()"
+          class="ml-1 w-5 h-5 flex items-center justify-center bg-brand-600 text-white rounded-full text-xs">+</button>
+      </div>
+    </div>
+  </nav>
+
+
+
+  <!-- CART SIDEBAR kichu add korle tokon   -->
+  <div id="cartOverlay" class="fixed inset-0 bg-black/40 z-[60] hidden" onclick="toggleCart()"></div>
+  <aside id="cartSidebar"
+    class="cart-sidebar fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl z-[70] translate-x-full flex flex-col">
+    <!-- Cart Header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b dark:border-gray-800">
+      <h2 class="text-lg font-700"><i class="fa-solid fa-cart-shopping mr-2 text-brand-600"></i>Your Cart</h2>
+      <button onclick="toggleCart()"
+        class="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"><i
+          class="fa-solid fa-xmark"></i></button>
+    </div>
+
+    <!-- Cart Items -->
+    <div id="cartItems" class="flex-1 overflow-y-auto cart-scroll px-6 py-4">
+      <p id="emptyCartMsg" class="text-center text-gray-400 mt-10"><i
+          class="fa-solid fa-cart-shopping text-4xl mb-3 block"></i>Your cart is empty</p>
+    </div>
+
+    <!-- Cart Footer: Summary -->
+    <div id="cartFooter" class="hidden border-t dark:border-gray-800 px-6 py-4 space-y-2 text-sm">
+      <!-- Coupon -->
+      <div class="flex gap-2">
+        <input id="couponInput" type="text" placeholder="Coupon code"
+          class="flex-1 px-3 py-2 rounded-lg border dark:border-gray-700 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+        <button onclick="applyCoupon()"
+          class="px-4 py-2 bg-brand-600 text-white rounded-lg text-sm font-600 hover:bg-brand-700 transition">Apply</button>
+      </div>
+      <p id="couponMsg" class="text-xs hidden"></p>
+
+      <div class="flex justify-between"><span class="text-gray-500">Subtotal</span><span id="subtotalDisplay">0
+          BDT</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Delivery Charge</span><span id="deliveryDisplay">60
+          BDT</span></div>
+      <div class="flex justify-between"><span class="text-gray-500">Shipping Cost</span><span id="shippingDisplay">40
+          BDT</span></div>
+      <div id="discountRow" class="hidden flex justify-between text-brand-600 font-600"><span>Discount</span><span
+          id="discountDisplay">-0 BDT</span></div>
+      <div class="flex justify-between text-base font-700 border-t dark:border-gray-800 pt-2"><span>Total</span><span
+          id="totalDisplay" class="text-brand-600">0 BDT</span></div>
+      <button onclick="checkout()"
+        class="w-full py-3 bg-brand-600 text-white rounded-lg font-600 hover:bg-brand-700 transition mt-2">Checkout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT er code  -->
+  <main>
+
+    <!-- SECTION =  HOME / BANNER  -->
+    <section id="home" class="pt-16">
+      <div class="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] overflow-hidden bg-gray-200 dark:bg-gray-900">
+
+        <!-- Banner Slides -->
+        <div id="bannerContainer" class="relative w-full h-full"></div>
+
+        <!-- Prev / Next Buttons er code -->
+        <button onclick="prevBanner()"
+          class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 rounded-full flex items-center justify-center shadow hover:scale-110 transition">
+          <i class="fa-solid fa-chevron-left"></i></button>
+        <button onclick="nextBanner()"
+          class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 dark:bg-gray-800/80 rounded-full flex items-center justify-center shadow hover:scale-110 transition"><i
+            class="fa-solid fa-chevron-right"></i></button>
+        <!-- Dots -->
+        <div id="bannerDots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2"></div>
+      </div>
+    </section>
+
+    <!--  SECTION = PRODUCTS  -->
+    <section id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl sm:text-4xl font-800 mb-2">Our <span class="text-brand-600">Products</span></h2>
+        <p class="text-gray-500 dark:text-gray-400">Browse and add items to your cart</p>
+      </div>
+
+      <!-- Search & Filter Bar -->
+      <div class="flex flex-col sm:flex-row gap-3 mb-8">
+        <div class="relative flex-1">
+          <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+          <input id="searchInput" type="text" placeholder="Search products..." oninput="filterProducts()"
+            class="w-full pl-10 pr-4 py-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 transition" />
+        </div>
+        <select id="categoryFilter" onchange="filterProducts()"
+          class="px-4 py-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+          <option value="all">All Categories</option>
+        </select>
+        <select id="sortFilter" onchange="filterProducts()"
+          class="px-4 py-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500">
+          <option value="default">Sort By</option>
+          <option value="low-high">Price: Low to High</option>
+          <option value="high-low">Price: High to Low</option>
+          <option value="rating">Top Rated</option>
+        </select>
+      </div>
+
+      <!-- Product Grid -->
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+  
+      </div>
+      <p id="noProducts" class="hidden text-center text-gray-400 py-10">No products found.</p>
+    </section>
+
+    <!--  SECTION = REVIEWS -->
+    <section id="reviews" class="bg-white dark:bg-gray-900 py-16 transition-colors duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl sm:text-4xl font-800 mb-2">Customer <span class="text-brand-600">Reviews</span></h2>
+          <p class="text-gray-500 dark:text-gray-400">What our customers say about us</p>
+        </div>
+        <div class="relative overflow-hidden">
+          <div id="reviewTrack" class="flex transition-transform duration-500 ease-in-out">
+            <!-- Reviews injected by JS -->
+          </div>
+          <button onclick="prevReview()"
+            class="absolute left-0 top-1/2 -translate-y-1/2 w-9 h-9 bg-white dark:bg-gray-800 shadow rounded-full flex items-center justify-center hover:scale-110 transition -ml-2 z-10"><i
+              class="fa-solid fa-chevron-left text-sm"></i></button>
+          <button onclick="nextReview()"
+            class="absolute right-0 top-1/2 -translate-y-1/2 w-9 h-9 bg-white dark:bg-gray-800 shadow rounded-full flex items-center justify-center hover:scale-110 transition -mr-2 z-10"><i
+              class="fa-solid fa-chevron-right text-sm"></i></button>
+        </div>
+      </div>
+    </section>
+
+    <!--  SECTION = CONTACT  -->
+    <section id="contact" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="max-w-lg mx-auto">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl sm:text-4xl font-800 mb-2">Get In <span class="text-brand-600">Touch</span></h2>
+          <p class="text-gray-500 dark:text-gray-400">We'd love to hear from you</p>
+        </div>
+        <form id="contactForm" onsubmit="handleContactSubmit(event)"
+          class="space-y-4 bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-lg dark:shadow-gray-900/50 transition-colors duration-300">
+          <div>
+            <label class="block text-sm font-600 mb-1">Name</label>
+            <input id="contactName" type="text" placeholder="Your name"
+              class="w-full px-4 py-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            <p id="nameError" class="text-red-500 text-xs mt-1 hidden"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-600 mb-1">Email</label>
+            <input id="contactEmail" type="email" placeholder="your@email.com"
+              class="w-full px-4 py-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500" />
+            <p id="emailError" class="text-red-500 text-xs mt-1 hidden"></p>
+          </div>
+          <div>
+            <label class="block text-sm font-600 mb-1">Message</label>
+            <textarea id="contactMessage" rows="4" placeholder="Write your message..."
+              class="w-full px-4 py-2.5 rounded-xl border dark:border-gray-700 dark:bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 resize-none"></textarea>
+            <p id="messageError" class="text-red-500 text-xs mt-1 hidden"></p>
+          </div>
+          <button type="submit"
+            class="w-full py-3 bg-brand-600 text-white rounded-xl font-600 hover:bg-brand-700 transition">Send
+            Message</button>
+          <p id="contactSuccess" class="hidden text-center text-brand-600 font-600 text-sm"><i
+              class="fa-solid fa-circle-check mr-1"></i>Thank you! Your message has been sent.</p>
+        </form>
+      </div>
+    </section>
+
+    <!-- SECTION: ABOUT US -->
+    <section id="about" class="bg-white dark:bg-gray-900 py-16 transition-colors duration-300">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-10">
+          <h2 class="text-3xl sm:text-4xl font-800 mb-2">About <span class="text-brand-600">SmartShop</span></h2>
+          <p class="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">SmartShop is a modern e-commerce platform built
+            as a course project for CSE-3532, demonstrating real-world web technologies in action.</p>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center hover:shadow-lg transition">
+            <div
+              class="w-14 h-14 bg-brand-100 dark:bg-brand-900/40 text-brand-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-bolt"></i>
+            </div>
+            <h3 class="font-700 mb-1">Fast Delivery</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Quick and reliable shipping across Bangladesh</p>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center hover:shadow-lg transition">
+            <div
+              class="w-14 h-14 bg-accent-500/10 text-accent-500 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <h3 class="font-700 mb-1">Secure Payment</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Your transactions are safe with us</p>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center hover:shadow-lg transition">
+            <div
+              class="w-14 h-14 bg-blue-100 dark:bg-blue-900/40 text-blue-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-headset"></i>
+            </div>
+            <h3 class="font-700 mb-1">24/7 Support</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">We're always here to help you</p>
+          </div>
+          <div class="bg-gray-50 dark:bg-gray-800 rounded-2xl p-6 text-center hover:shadow-lg transition">
+            <div
+              class="w-14 h-14 bg-purple-100 dark:bg-purple-900/40 text-purple-600 rounded-xl flex items-center justify-center mx-auto mb-4 text-2xl">
+              <i class="fa-solid fa-rotate-left"></i>
+            </div>
+            <h3 class="font-700 mb-1">Easy Returns</h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Hassle-free return policy</p>
+          </div>
+        </div>
+        <!-- Team memeber -->
+        <div class="mt-12 text-center">
+          <h3 class="text-xl font-700 mb-6">Our Team</h3>
+          <div class="flex flex-wrap justify-center gap-6" id="teamContainer">
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!--  SECTION =  FAQ -->
+    <section class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="text-center mb-10">
+        <h2 class="text-3xl sm:text-4xl font-800 mb-2">Frequently <span class="text-brand-600">Asked</span></h2>
+      </div>
+      <div id="faqContainer" class="space-y-3">
+      
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="bg-gray-900 dark:bg-black text-gray-300 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+        <div>
+          <h3 class="text-white font-700 text-lg mb-3"><i
+              class="fa-solid fa-bag-shopping mr-1 text-brand-400"></i>SmartShop</h3>
+          <p class="text-sm leading-relaxed">Your one-stop online store for the best products at affordable prices.</p>
+        </div>
+        <div>
+          <h4 class="text-white font-600 mb-3">Quick Links</h4>
+          <ul class="space-y-2 text-sm">
+            <li><a href="#home" class="hover:text-brand-400 transition">Home</a></li>
+            <li><a href="#products" class="hover:text-brand-400 transition">Products</a></li>
+            <li><a href="#reviews" class="hover:text-brand-400 transition">Reviews</a></li>
+            <li><a href="#contact" class="hover:text-brand-400 transition">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-600 mb-3">Contact Info</h4>
+          <ul class="space-y-2 text-sm">
+            <li><i class="fa-solid fa-envelope mr-2 text-brand-400"></i>info@smartshop.com</li>
+            <li><i class="fa-solid fa-phone mr-2 text-brand-400"></i>+880 1234-567890</li>
+            <li><i class="fa-solid fa-location-dot mr-2 text-brand-400"></i>Chittagong, Bangladesh</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white font-600 mb-3">Follow Us</h4>
+          <div class="flex gap-3">
+            <a href="#"
+              class="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-brand-600 transition"><i
+                class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"
+              class="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-brand-600 transition"><i
+                class="fa-brands fa-twitter"></i></a>
+            <a href="#"
+              class="w-9 h-9 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-brand-600 transition"><i
+                class="fa-brands fa-instagram"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-gray-800 pt-6 text-center text-sm text-gray-500">
+        &copy; 2026 SmartShop. CSE-3532 Mid Project. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== BACK TO TOP ===================== -->
+  <button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"
+    class="fixed bottom-6 right-6 w-11 h-11 bg-brand-600 text-white rounded-full shadow-lg flex items-center justify-center hover:bg-brand-700 transition opacity-0 pointer-events-none z-50">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
   <script src="script.js"></script>
+
 </body>
+
 </html>
