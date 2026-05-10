@@ -735,7 +735,7 @@ function initTeam() {
     },
     {
       image: 'assects/mash.jpeg',
-      name: 'Mash Rafi',
+      name: 'MD MashRafi Abrar',
       role: 'UI/UX Designer',
     },
   ];
