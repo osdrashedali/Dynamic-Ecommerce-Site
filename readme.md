@@ -119,5 +119,9 @@ SmartShop is fully responsive and works on:
 
 This project is for educational purposes only.
 
+---
 
+## 🌐Live View: 
+
+🔗 https://osdrashedali.github.io/Dynamic-Ecommerce-Site/
 
